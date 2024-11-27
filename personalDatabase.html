@@ -1,0 +1,127 @@
+<html>
+<body>
+
+<form>
+Address: <input type="text" name="id" id="idno" /><br />
+phone: <input type="text" name="phone" id="phoneno" /><br />
+street: <input type="text" name="street" id="streetno" /><br />
+city: <input type="text" name="city" id="cityid" /><br />
+state: <input type="text" name="state" id="stateid" /><br />
+<hr />
+<button type="button" id="submitData" name="submitData" />Add</button>
+<button type="button" id="getOneDoc" name="getOneDoc" />Get Address</button>
+<button type="button" id="deleteData" name="deleteData" />Delete</button>
+<button type="button" id="updateData" name="updateData" />Update</button>
+<button type="button" id="getManyDocs" name="getManyDocs" />Get Many Docs</button>
+
+</form>
+
+</body>
+</html>
+
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.7.0/firebase-app.js";
+  import { doc, setDoc, getDoc, getFirestore, query, getDocs, collection, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.7.0/firebase-firestore.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+  apiKey: "AIzaSyB3xPZwAvVtu2iMhewOqF_RDCp7X5fOYuc",
+  authDomain: "unit5-21046.firebaseapp.com",
+  projectId: "unit5-21046",
+  storageBucket: "unit5-21046.appspot.com",
+  messagingSenderId: "559081146479",
+  appId: "1:559081146479:web:00cd1f3f9364168fc6659a"
+};
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+submitData.addEventListener('click', (e) => 
+   {
+      var pid = document.getElementById('idno').value;
+      var pphone = document.getElementById('phoneno').value;
+      var pstreet = document.getElementById('streetno').value;
+      var pcity = document.getElementById('cityid').value;
+      var pstate = document.getElementById('stateid').value;
+      setDoc(doc(db, "Address", pid), 
+      {
+         phone: pphone,
+         street: pstreet,
+         city: pcity,
+         state: pstate
+      });
+      alert("Record Added");
+   });
+
+updateData.addEventListener('click', (e) => 
+   {
+      var pid = document.getElementById('idno').value;
+      var pphone = document.getElementById('phoneno').value;
+      var pstreet = document.getElementById('streetno').value;
+      var pcity = document.getElementById('cityid').value;
+      var pstate = document.getElementById('stateid').value;
+      const docRef = doc(db, "Address", pid);
+      updateDoc(docRef, 
+      {
+         phone: pphone,
+         street: pstreet,
+         city: pcity,
+         state: pstate
+      });
+      alert("Record Updated");
+   });
+
+deleteData.addEventListener('click', (e) => 
+   {
+      var pid = document.getElementById('idno').value;
+      deleteDoc(doc(db, "Address", pid));
+      alert("Record Deleted");
+   });
+
+getOneDoc.addEventListener('click', (e) => 
+   {
+      async function getData()
+      {
+         var pid = document.getElementById('idno').value;
+         const docRef = doc(db, "Address", pid);
+         const docSnap = await getDoc(docRef);
+
+         if (docSnap.exists()) 
+         {
+            document.getElementById('phoneno').value = docSnap.data().phone;
+            document.getElementById('streetno').value = docSnap.data().street;
+            document.getElementById('cityid').value = docSnap.data().city;
+            document.getElementById('stateid').value = docSnap.data().state;
+            alert("Document Found");
+         }
+         else 
+            alert("No such document");
+      }
+      getData();
+   });
+
+getManyDocs.addEventListener('click', (e) => 
+   {
+      async function getData()
+      {
+         const q = query(collection(db, "Address"));
+         const querySnapshot = await getDocs(q);
+         var sum = 0.0;
+         var average = 0;
+         var count = 0;
+         querySnapshot.forEach((doc) => 
+         {
+            sum = sum + parseInt(doc.data().phone);
+            count = count + 1;
+         });
+        average = sum / count;
+        alert(average);
+      }
+      getData();
+   });
+
+</script>
